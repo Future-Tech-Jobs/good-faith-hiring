@@ -6,12 +6,6 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin
 
-# Preview deploys must never be indexed.
-https://:project.pages.dev/*
-  X-Robots-Tag: noindex
-https://:version.:project.pages.dev/*
-  X-Robots-Tag: noindex
-
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 

@@ -16,7 +16,7 @@ Please don't name employers, recruiters or candidates anywhere on GitHub. To rep
 
 ## How it's built
 
-A static [Astro](https://astro.build) site, deployed to Cloudflare Pages from `main`.
+A static [Astro](https://astro.build) site, served as static assets by a Cloudflare Worker (`wrangler.jsonc`) and deployed by Workers Builds from `main`.
 
 | Where | What |
 | --- | --- |

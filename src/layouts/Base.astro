@@ -19,6 +19,9 @@ interface Props {
 
 const { title, description, og, jsonLd = [], ogType = 'website' } = Astro.props;
 const isError = Astro.url.pathname.startsWith('/404');
+// Workers Builds sets the branch. Anything but main is a preview, which must not be indexed.
+const branch = process.env.WORKERS_CI_BRANCH;
+const isPreview = Boolean(branch) && branch !== 'main';
 const canonical = isError ? undefined : absolute(Astro.url.pathname);
 const pageTitle = fullTitle(title);
 const image = absolute(`/og/${og}.png`);
@@ -31,7 +34,8 @@ const image = absolute(`/og/${og}.png`);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    {canonical ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {(isError || isPreview) && <meta name="robots" content="noindex" />}
     <link rel="preload" href={figtreeUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={bricolageUrl} as="font" type="font/woff2" crossorigin />
 

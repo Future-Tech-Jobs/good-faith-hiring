@@ -4,3 +4,4 @@ dist/
 .DS_Store
 .lighthouseci/
 test-results/
+.wrangler/

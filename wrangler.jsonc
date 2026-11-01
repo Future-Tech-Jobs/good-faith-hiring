@@ -1,0 +1,12 @@
+// Deployed by Cloudflare Workers Builds from main. A static site: no Worker code, just assets.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "good-faith-hiring",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "preview_urls": true
+}
