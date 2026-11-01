@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { formatDate } from '../lib/site';
+
+const adopters = (await getCollection('adopters')).sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+
+<Base
+  title="Employers who follow Good Faith Hiring"
+  description="Employers listed as following Good Faith Hiring, after a check of three live adverts against the pay, location, right-to-work and requirements commitments."
+  og="adopters"
+>
+  <div class="page-head emp">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol><li><a href="/">Home</a></li><li aria-current="page">Adopters</li></ol>
+      </nav>
+      <h1>Adopters</h1>
+      <p class="lede">
+        Employers who follow the commitments. Before listing anyone, we check three of their live adverts against
+        commitments 1 to 4.
+      </p>
+    </div>
+  </div>
+  <div class="wrap prose-wrap">
+    {adopters.length > 0 ? (
+      <ul class="adopters">
+        {adopters.map((a) => (
+          <li>
+            <a href={a.data.url} rel="nofollow">{a.data.name}</a>
+            <span class="meta-row">Listed {formatDate(a.data.listed)} · {a.data.version}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="callout">
+        <strong>No employers are listed yet.</strong>
+        <p>
+          Future Tech Jobs, which maintains the standard, is checking its own adverts and will be listed on the same
+          terms as anyone else.
+        </p>
+      </div>
+    )}
+    <div class="prose all-changes">
+      <p>
+        Listing means an employer has said it follows the commitments and we've checked three adverts. It isn't an
+        audit of how they hire. If a listed employer isn't keeping to the commitments,
+        <a href="/about/#reporting-an-employer">tell us privately</a>.
+      </p>
+      <p><a href="/adopt/">How to be listed</a></p>
+    </div>
+  </div>
+</Base>

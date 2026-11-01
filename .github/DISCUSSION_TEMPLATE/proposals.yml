@@ -1,0 +1,29 @@
+title: "GFH-"
+labels: [proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a change to the wording or figures of a commitment. Start the title with its ID, for example "GFH-E4: allow six must-haves".
+
+        **Don't name employers, recruiters, candidates or anyone else.** Describe situations in general terms. We'll remove posts that include personal details.
+  - type: input
+    id: commitment
+    attributes:
+      label: Commitment ID
+      placeholder: GFH-E4
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What would you change?
+      description: Quote the current wording and your suggested wording, if you can.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+    validations:
+      required: true

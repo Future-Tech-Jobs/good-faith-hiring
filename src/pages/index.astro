@@ -1,0 +1,221 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CommitmentCard from '../components/CommitmentCard.astro';
+import { getCommitments } from '../lib/commitments';
+import { SITE, absolute, formatDate } from '../lib/site';
+
+const commitments = await getCommitments();
+const changes = (await getCollection('changes')).sort((a, b) => +b.data.date - +a.data.date);
+const latest = changes[0].data;
+
+const faqs = [
+  {
+    q: "Should I apply if I don't have every nice-to-have?",
+    a: [`Yes. That's what <a href="/requirements/">commitment 4</a> is for. If you meet every must-have, apply. Employers who follow this only turn people down on the must-haves.`],
+  },
+  {
+    q: 'Can I use AI to help with my application?',
+    a: [`Yes. AI and assistive tools can help you write. What you say must be true and written for that job. Sending the same application to roles you haven't read doesn't meet <a href="/time/">commitment 6</a>.`],
+  },
+  {
+    q: 'Why is there a limit on the salary range?',
+    a: ["A range of £30,000 to £120,000 doesn't tell anyone anything. Keeping the top within 1.5× the bottom keeps the range useful, with room for experience."],
+  },
+  {
+    q: "What if an employer says they follow it, and doesn't?",
+    a: [
+      'Point them to the commitment they missed. Each one has its own page you can link to.',
+      `If they're on the <a href="/adopters/">adopters list</a>, tell us privately at <a href="mailto:${SITE.reports}">${SITE.reports}</a>. We'll talk to them, and they may be removed from the list. Please don't post about named employers in public.`,
+    ],
+  },
+  {
+    q: 'Is any of this a legal requirement?',
+    a: ["No, it's voluntary. Where the law already says something, such as on discrimination or right-to-work checks, the commitments are written to fit it. They aren't legal advice."],
+  },
+  {
+    q: "Who's behind this, and how do I give feedback?",
+    a: [
+      `<a href="${SITE.company.url}">Future Tech Jobs</a>, which runs UK tech job boards, started it and maintains it. Following it is never a condition of advertising with us. <a href="/about/">More about who's behind it</a>.`,
+      `Suggest changes in <a href="${SITE.discussions}">GitHub Discussions</a> or by email to <a href="mailto:${SITE.hello}">${SITE.hello}</a>.`,
+    ],
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': absolute('/#org'),
+    name: SITE.name,
+    url: SITE.url,
+    logo: absolute('/apple-touch-icon.png'),
+    email: SITE.hello,
+    founder: { '@type': 'Organization', name: SITE.company.name, url: SITE.company.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE.name,
+    url: SITE.url,
+    inLanguage: 'en-GB',
+    publisher: { '@id': absolute('/#org') },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: 'Good Faith Hiring commitments',
+    url: SITE.url,
+    version: latest.version,
+    datePublished: SITE.published,
+    dateModified: latest.date.toISOString().slice(0, 10),
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    inLanguage: 'en-GB',
+    author: { '@id': absolute('/#org') },
+    hasPart: commitments.map((c) => ({
+      '@type': 'CreativeWork',
+      name: `${c.data.number}. ${c.data.topic}`,
+      url: absolute(`/${c.data.slug}/`),
+    })),
+  },
+];
+---
+
+<Base
+  title="Good Faith Hiring: a fair hiring standard for both sides"
+  description="Eight free commitments for employers, and eight for candidates: show the salary, reply to everyone, meet the must-haves, turn up or cancel early."
+  og="index"
+  jsonLd={jsonLd}
+>
+  <section class="hero">
+    <div class="wrap">
+      <a class="pill" href="/about/#how-the-commitments-change">{SITE.version} for comment</a>
+      <h1>Hiring works when <span class="emp-text">both</span> <span class="cand-text">sides</span> keep their word.</h1>
+      <p class="lede">
+        Eight simple commitments for employers, and eight for the people applying to them. Free to adopt, written in the
+        open, and short enough to read over a coffee.
+      </p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#standard">Read the commitments</a>
+        <a class="btn ghost" href="#why">Why both sides?</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="standard" id="standard" data-view="both" aria-labelledby="standard-h">
+    <div class="wrap">
+      <div class="std-head">
+        <div>
+          <h2 id="standard-h">The commitments</h2>
+          <p class="meta">Each one pairs what an employer does with what a candidate does in return.</p>
+        </div>
+        <div class="view" role="group" aria-label="Show commitments for" hidden>
+          <button type="button" data-view="both" aria-pressed="true">Both</button>
+          <button type="button" data-view="emp" aria-pressed="false">I'm hiring</button>
+          <button type="button" data-view="cand" aria-pressed="false">I'm applying</button>
+        </div>
+      </div>
+      <p id="view-status" class="sr-only" aria-live="polite"></p>
+      <div class="list">
+        {commitments.map((c) => <CommitmentCard c={c} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt" id="why" aria-labelledby="why-h">
+    <div class="wrap why">
+      <h2 class="section-title" id="why-h">Why both sides?</h2>
+      <div class="copy">
+        <p class="big">Each side's worst habits make the other's worse.</p>
+        <p>
+          When adverts hide the salary and location, people apply for jobs they can't take. Swamped with those,
+          employers stop replying. People who never hear back send more applications with less care, and the pile
+          keeps growing.
+        </p>
+        <p>
+          Most hiring pledges only ask things of employers, so employers have little reason to sign up. This one asks
+          the same of everyone: be clear about what you need, check before you commit, and close the loop.
+        </p>
+        <p>
+          The first four commitments fit together on purpose. When an employer does their part, candidates have
+          everything they need to do theirs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="use" aria-labelledby="use-h">
+    <div class="wrap">
+      <h2 class="section-title" id="use-h">Using it</h2>
+      <div class="use">
+        <article class="u-emp">
+          <span class="tag">If you're hiring</span>
+          <h3>Build it into your adverts</h3>
+          <ul>
+            <li>Check each advert against commitments 1 to 5 before it goes live.</li>
+            <li>Plan your replies and feedback around 7 and 8.</li>
+            <li>Say that you follow Good Faith Hiring, with a link here.</li>
+          </ul>
+          <a class="go" href="/for-employers/">The employer checklist</a>
+        </article>
+        <article class="u-cand">
+          <span class="tag">If you're applying</span>
+          <h3>Run through it before you apply</h3>
+          <ul>
+            <li>Check 1 to 4 before each application. It takes a minute.</li>
+            <li>Expect a reply and feedback from employers who say they follow it.</li>
+            <li>There's nothing to sign up to.</li>
+          </ul>
+          <a class="go" href="/for-candidates/">The candidate checklist</a>
+        </article>
+        <article class="u-board">
+          <span class="tag">Job boards and recruiters</span>
+          <h3>Show it where people decide</h3>
+          <ul>
+            <li>Highlight adverts that meet the employer side of 1 to 4.</li>
+            <li>Remind candidates of their side when they apply.</li>
+            <li>Share reply times with employers.</li>
+          </ul>
+          <a class="go" href="/adopt/">How to adopt it</a>
+        </article>
+      </div>
+      <ul class="isnt" aria-label="What it costs">
+        <li>Free to use</li><li>No fees, ever</li><li>Copy it, adapt it</li><li>Written in the open</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="band alt" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <h2 class="section-title" id="faq-h">Questions</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <div>{f.a.map((p) => <p set:html={p} />)}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="versions" aria-labelledby="versions-h">
+    <div class="wrap">
+      <h2 class="section-title" id="versions-h">Changes</h2>
+      <ol class="versions">
+        {changes.slice(0, 3).map((ch) => (
+          <li class="version">
+            <span class="v">{ch.data.version}</span>
+            <span class="d">{formatDate(ch.data.date)}</span>
+            <p>{ch.data.summary}</p>
+          </li>
+        ))}
+      </ol>
+      <p class="all-changes"><a href="/changes/">All changes</a></p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '../scripts/view.ts';
+</script>

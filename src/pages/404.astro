@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCommitments } from '../lib/commitments';
+
+const commitments = await getCommitments();
+---
+
+<Base title="Page not found" description="This page doesn't exist. Here are the eight Good Faith Hiring commitments instead." og="index">
+  <div class="page-head">
+    <div class="wrap">
+      <h1>Page not found</h1>
+      <p class="lede">That page doesn't exist, or has moved. The commitments are below.</p>
+    </div>
+  </div>
+  <div class="wrap prose-wrap">
+    <ol class="prose">
+      {commitments.map(({ data }) => <li><a href={`/${data.slug}/`}>{data.topic}</a></li>)}
+    </ol>
+    <p class="all-changes"><a href="/">Go to the homepage</a></p>
+  </div>
+</Base>

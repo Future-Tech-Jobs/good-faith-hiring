@@ -1,0 +1,9 @@
+# Employers listed after a maintainer has checked three live adverts against commitments 1 to 4.
+# Publish only the organisation's name, its careers page, the date listed and the version. Contact details stay private.
+# Example:
+# - id: example-ltd
+#   name: Example Ltd
+#   url: https://example.com/careers
+#   listed: 2026-12-01
+#   version: Draft 1
+[]

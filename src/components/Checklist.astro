@@ -1,0 +1,32 @@
+---
+import { getCommitments } from '../lib/commitments';
+
+interface Props { side: 'employer' | 'candidate' }
+const { side } = Astro.props;
+const all = await getCommitments();
+
+const intro =
+  side === 'employer'
+    ? 'Commitments 1 to 5 apply to every advert before it goes live. 6 to 8 are about how you run the process.'
+    : 'Check 1 to 4 before every application. 5 to 8 are about how you apply and keep in touch.';
+const heading = side === 'employer' ? 'The employer checklist' : 'The before-you-apply checklist';
+---
+
+<section class="checklist-block" aria-labelledby="checklist-h">
+  <h2 id="checklist-h">{heading}</h2>
+  <p>{intro} <span class="print-hint no-print">To print it or save it as a PDF, use your browser's print option.</span></p>
+  <ol class="checklist">
+    {all.map(({ data }) => {
+      const s = data[side];
+      return (
+        <li>
+          <span class="ct">
+            <a href={`/${data.slug}/`}>{data.number}. {s.title}</a>
+            <span class="cid">{s.id}</span>
+          </span>
+          <ul>{(s.exact.length ? s.exact : [s.good]).map((x) => <li>{x}</li>)}</ul>
+        </li>
+      );
+    })}
+  </ol>
+</section>

@@ -1,0 +1,43 @@
+---
+import Mark from './Mark.astro';
+import { SITE } from '../lib/site';
+
+const links = [
+  { href: '/adopt/', label: 'Adopt it' },
+  { href: '/adopters/', label: 'Adopters' },
+  { href: '/changes/', label: 'Changes' },
+  { href: '/about/', label: 'About' },
+  { href: '/about/#reporting-an-employer', label: 'Report an employer' },
+  { href: '/privacy/', label: 'Privacy' },
+  { href: SITE.repo, label: 'GitHub' },
+  { href: `mailto:${SITE.hello}`, label: 'Contact' },
+];
+const c = SITE.company;
+---
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <a class="mark" href="/"><Mark size={26} /><span>Good Faith Hiring</span></a>
+        <p>{SITE.tagline} {SITE.version}, published for comment.</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="foot-links">
+          {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+    <div class="legal">
+      <p>
+        Good Faith Hiring is founded and maintained by <a href={c.url}>{c.brand}</a>.{' '}
+        {c.name}, registered in {c.registeredIn}, company number {c.number}. Registered office: {c.office}.
+      </p>
+      <p>
+        The commitments are free to copy and adapt under{' '}
+        <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. The site's code is MIT
+        licensed. The name and badge are not covered by either licence.
+      </p>
+    </div>
+  </div>
+</footer>

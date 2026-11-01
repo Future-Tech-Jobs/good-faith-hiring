@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Propose a change to a commitment
+    url: https://github.com/Future-Tech-Jobs/good-faith-hiring/discussions/new?category=proposals
+    about: Changes to the wording or figures start as a discussion.
+  - name: Report an employer on the adopters list
+    url: https://goodfaithhiring.co.uk/about/#reporting-an-employer
+    about: Reports are handled privately by email. Please don't post them here.

@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { SITE, formatDate } from '../lib/site';
+
+const changes = (await getCollection('changes')).sort((a, b) => +b.data.date - +a.data.date);
+---
+
+<Base
+  title="Changes to the commitments"
+  description="Every version of the Good Faith Hiring commitments, newest first, with what changed and when."
+  og="changes"
+>
+  <div class="page-head">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol><li><a href="/">Home</a></li><li aria-current="page">Changes</li></ol>
+      </nav>
+      <h1>Changes</h1>
+      <p class="lede">Every change to the wording or figures of a commitment is listed here, newest first.</p>
+    </div>
+  </div>
+  <div class="wrap prose-wrap">
+    <ol class="versions">
+      {changes.map((ch) => (
+        <li class="version" id={ch.id}>
+          <span class="v">{ch.data.version}</span>
+          <span class="d">{formatDate(ch.data.date)}</span>
+          <p>{ch.data.summary}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="prose all-changes">
+      <p>
+        Once version 1.0 is published, each version keeps a permanent address, such as <code>/v1/</code>, so anyone
+        who says they follow a version points to fixed text. The full history of every edit is on
+        <a href={SITE.repo + '/commits/main/content/commitments'}>GitHub</a>.
+      </p>
+    </div>
+  </div>
+</Base>

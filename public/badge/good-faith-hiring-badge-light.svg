@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="64" viewBox="0 0 240 64" role="img" aria-labelledby="t">
+  <title id="t">We follow Good Faith Hiring</title>
+  <rect x="0.5" y="0.5" width="239" height="63" rx="31.5" fill="#FFFFFF" stroke="#E6E9EF"/>
+  <circle cx="30" cy="32" r="12" fill="#1B6E5C" opacity=".85"/>
+  <circle cx="41" cy="32" r="12" fill="#6650C8" opacity=".85"/>
+  <text x="66" y="28" font-family="'Segoe UI', 'Avenir Next', system-ui, -apple-system, sans-serif" font-size="12" fill="#5E6878">We follow</text>
+  <text x="66" y="45" font-family="'Segoe UI', 'Avenir Next', system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#1D2433">Good Faith Hiring</text>
+</svg>

@@ -1,0 +1,26 @@
+name: Site bug
+description: Something on the website is broken, hard to use or inaccessible.
+labels: [site]
+body:
+  - type: markdown
+    attributes:
+      value: "Please don't include personal details, or name employers, recruiters or candidates. We'll remove issues that do."
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The address of the page.
+      placeholder: https://goodfaithhiring.co.uk/pay/
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: setup
+    attributes:
+      label: Device, browser and any assistive technology
+      placeholder: iPhone 15, Safari, VoiceOver

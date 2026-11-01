@@ -1,0 +1,153 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Tick from '../components/Tick.astro';
+import Checklist from '../components/Checklist.astro';
+import { getCommitments, type Commitment } from '../lib/commitments';
+import { SITE, absolute, formatDate } from '../lib/site';
+
+export async function getStaticPaths() {
+  const commitments = await getCommitments();
+  const pages = await getCollection('pages');
+  return [
+    ...commitments.map((c, i) => ({
+      params: { slug: c.data.slug },
+      props: { kind: 'commitment' as const, entry: c, prev: commitments[i - 1], next: commitments[i + 1] },
+    })),
+    ...pages.map((p) => ({ params: { slug: p.id }, props: { kind: 'page' as const, entry: p } })),
+  ];
+}
+
+type Props =
+  | { kind: 'commitment'; entry: Commitment; prev?: Commitment; next?: Commitment }
+  | { kind: 'page'; entry: CollectionEntry<'pages'> };
+
+const props = Astro.props;
+const { Content } = await render(props.entry);
+const path = `/${Astro.params.slug}/`;
+
+const crumbs = (name: string) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+    { '@type': 'ListItem', position: 2, name, item: absolute(path) },
+  ],
+});
+---
+
+{props.kind === 'commitment' ? (
+  (() => {
+    const d = props.entry.data;
+    const jsonLd = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: d.title,
+        description: d.description,
+        url: absolute(path),
+        inLanguage: 'en-GB',
+        datePublished: SITE.published,
+        version: SITE.version,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+        publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+        image: absolute(`/og/${d.slug}.png`),
+      },
+      crumbs(d.topic),
+    ];
+    return (
+      <Base title={d.title} description={d.description} og={d.slug} jsonLd={jsonLd} ogType="article">
+        <div class="page-head">
+          <div class="wrap">
+            <nav class="crumbs" aria-label="Breadcrumb">
+              <ol>
+                <li><a href="/">Home</a></li>
+                <li><a href={`/#${d.slug}`}>The commitments</a></li>
+                <li aria-current="page">{d.topic}</li>
+              </ol>
+            </nav>
+            <h1>{d.title}</h1>
+            <div class="meta-row">
+              <span>Commitment {d.number} of 8</span>
+              <span>{d.employer.id} and {d.candidate.id}</span>
+              <span>{SITE.version}</span>
+            </div>
+          </div>
+        </div>
+        <div class="wrap prose-wrap">
+          <div class="commit-sides">
+            {(['employer', 'candidate'] as const).map((who) => {
+              const s = d[who];
+              return (
+                <section class={`side ${who === 'employer' ? 'emp' : 'cand'}`} aria-labelledby={`${s.id}-h`} id={s.id}>
+                  <span class="who">{who === 'employer' ? 'Employers' : 'Candidates'} <span class="id">{s.id}</span></span>
+                  <h2 id={`${s.id}-h`}>{s.title}</h2>
+                  <p>{s.summary}</p>
+                  <div class="good"><Tick /><span>{s.good}</span></div>
+                  {s.exact.length > 0 && (
+                    <>
+                      <p class="who">What counts</p>
+                      <ul class="exact">{s.exact.map((x) => <li>{x}</li>)}</ul>
+                    </>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+          <article class="prose">
+            <Content />
+            <div class="callout">
+              <strong>Think this should say something different?</strong>
+              <p>
+                Suggest a change in <a href={SITE.discussions}>GitHub Discussions</a> or email{' '}
+                <a href={`mailto:${SITE.hello}`}>{SITE.hello}</a>. Please don't name employers or people.
+              </p>
+            </div>
+          </article>
+          <nav class="pager" aria-label="Other commitments">
+            {props.prev && (
+              <a href={`/${props.prev.data.slug}/`} rel="prev">
+                <span class="dir">Previous</span>
+                <span class="t">{props.prev.data.number}. {props.prev.data.topic}</span>
+              </a>
+            )}
+            {props.next && (
+              <a href={`/${props.next.data.slug}/`} rel="next" class="next">
+                <span class="dir">Next</span>
+                <span class="t">{props.next.data.number}. {props.next.data.topic}</span>
+              </a>
+            )}
+          </nav>
+        </div>
+      </Base>
+    );
+  })()
+) : (
+  (() => {
+    const d = props.entry.data;
+    return (
+      <Base title={d.title} description={d.description} og={props.entry.id} jsonLd={[crumbs(d.heading)]}>
+        <div class={`page-head ${d.checklist === 'employer' ? 'emp' : ''}`}>
+          <div class="wrap">
+            <nav class="crumbs" aria-label="Breadcrumb">
+              <ol>
+                <li><a href="/">Home</a></li>
+                <li aria-current="page">{d.heading}</li>
+              </ol>
+            </nav>
+            <h1>{d.heading}</h1>
+            {d.lede && <p class="lede">{d.lede}</p>}
+            <p class="meta-row">Last updated {formatDate(d.updated)}</p>
+          </div>
+        </div>
+        <div class="wrap prose-wrap">
+          {d.checklist && <Checklist side={d.checklist} />}
+          <article class="prose">
+            <Content />
+          </article>
+        </div>
+      </Base>
+    );
+  })()
+)}

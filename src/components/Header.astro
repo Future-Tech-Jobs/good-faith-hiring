@@ -1,0 +1,28 @@
+---
+import Mark from './Mark.astro';
+
+const links = [
+  { href: '/#standard', label: 'The commitments' },
+  { href: '/for-employers/', label: 'For employers' },
+  { href: '/for-candidates/', label: 'For candidates' },
+  { href: '/adopters/', label: 'Adopters' },
+  { href: '/about/', label: 'About' },
+];
+const path = Astro.url.pathname;
+---
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="/">
+      <Mark />
+      <span>Good Faith Hiring</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {links.map((l) => (
+          <li><a href={l.href} aria-current={l.href === path ? 'page' : undefined}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

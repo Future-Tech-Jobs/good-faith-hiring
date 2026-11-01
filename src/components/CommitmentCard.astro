@@ -1,0 +1,34 @@
+---
+import type { Commitment } from '../lib/commitments';
+import { absolute } from '../lib/site';
+import Tick from './Tick.astro';
+
+interface Props { c: Commitment }
+const { data } = Astro.props.c;
+const page = `/${data.slug}/`;
+---
+
+<article class="clause" id={data.slug} aria-labelledby={`${data.slug}-h`}>
+  <div class="topic">
+    <span class="n" aria-hidden="true">{data.number}</span>
+    <h3 id={`${data.slug}-h`}><span class="sr-only">{data.number}. </span>{data.topic}</h3>
+    <div class="actions">
+      <a class="more" href={page}>More on {data.topic.toLowerCase()}<span class="sr-only"> (commitment {data.number})</span></a>
+      <button type="button" class="copy-link" data-url={absolute(page)} hidden>
+        Copy link<span class="sr-only"> to commitment {data.number}, {data.topic}</span>
+      </button>
+    </div>
+  </div>
+  <div class="side emp">
+    <span class="who">Employers <span class="id">{data.employer.id}</span></span>
+    <h4>{data.employer.title}</h4>
+    <p>{data.employer.summary}</p>
+    <div class="good"><Tick /><span>{data.employer.good}</span></div>
+  </div>
+  <div class="side cand">
+    <span class="who">Candidates <span class="id">{data.candidate.id}</span></span>
+    <h4>{data.candidate.title}</h4>
+    <p>{data.candidate.summary}</p>
+    <div class="good"><Tick /><span>{data.candidate.good}</span></div>
+  </div>
+</article>
